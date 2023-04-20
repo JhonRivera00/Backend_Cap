@@ -22,6 +22,10 @@ const usuarioSchema = new Schema(
                 unique: true
             }
         },
+        genero:{
+            type: String,
+            required: true
+        },
         correo:{
             type: String,
             required: true,

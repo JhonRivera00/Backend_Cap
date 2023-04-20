@@ -1,8 +1,8 @@
 import Usuario from '../models/Usuario.js';
 
 export const validarCamposRegisterProfesional = async(req, res, next)=>{
-    const { nombres, apellidos, tipo, numeroDocumento, correo, numTelefono, profesion, contrasena, rol } = req.body;
-    if(!nombres || !apellidos || !tipo || !numeroDocumento || !correo || !numTelefono || !profesion || !contrasena || !rol){
+    const { nombres, apellidos, tipo, numeroDocumento, genero, correo, numTelefono, profesion, contrasena, rol } = req.body;
+    if(!nombres || !apellidos || !tipo || !numeroDocumento || !genero || !correo || !numTelefono || !profesion || !contrasena || !rol){
         return res.status(400).json("Todos los datos son requeridos");
     }
 
@@ -20,8 +20,8 @@ export const validarCamposRegisterProfesional = async(req, res, next)=>{
 }
 
 export const validarCamposRegisterAprendiz = async(req, res, next)=>{
-    const { nombres, apellidos, tipo, numeroDocumento, correo, numTelefono, contrasena } = req.body;
-    if(!nombres || !apellidos || !tipo || !numeroDocumento || !correo || !numTelefono || !contrasena){
+    const { nombres, apellidos, tipo, numeroDocumento, genero,programa, correo, numTelefono, contrasena } = req.body;
+    if(!nombres || !apellidos || !tipo || !numeroDocumento || !genero || !correo || !numTelefono || !contrasena || !programa){
         return res.status(400).json("Todos los datos son requeridos");
     }
 
