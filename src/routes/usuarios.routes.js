@@ -15,7 +15,7 @@ router.post("/loginAdministrador", validarCamposAuch, loginUsuarioAdministrador)
 router.get("/solicitudesProfesional", verificarToken, verificarAdministrador,  solicitudAccesoProfesional);
 router.put("/aceptarProfesional/:id", verificarToken, verificarAdministrador,  aceptarProfesional);
 router.get("/usuario/:id", verUsuario);
-router.get("/verUsuariosProfesioales", verUsuariosProfesionales)
+router.get("/verUsuariosProfesionales", verUsuariosProfesionales)
 
 
 export default router;
