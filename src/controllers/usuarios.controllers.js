@@ -278,3 +278,29 @@ export const verUsuario = async(req, res)=>{
     return res.status(500).json(" Error en el servidor ");
   }
 }
+
+export const verUsuariosProfesionales = async (req, res) => {
+  try {
+    const usuarios = await Usuario.find({
+      "estado.aceptado": true,
+      "estado.habilitado": true,
+    }).populate("rol");
+
+    const usuariosConRolProfesional = [];
+    usuarios.forEach((usuario) => {
+      if (usuario.rol && usuario.rol.length > 0) {
+        usuario.rol.forEach((rol) => {
+          if (rol.nombre === "profesional") {
+            usuariosConRolProfesional.push(usuario);
+          }
+        });
+      }
+    });
+
+    res.status(200).json(usuariosConRolProfesional);
+
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json(" Error en el servidor ");
+  }
+};
