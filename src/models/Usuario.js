@@ -3,6 +3,16 @@ import bcryptjs from 'bcryptjs';
 
 const usuarioSchema = new Schema(
     {
+        perfil:{
+            idImg:{
+                type: String,
+                default: null
+            },
+            urlImg:{
+                type: String,
+                default: null
+            }
+        },
         nombres:{
             type: String,
             required: true

@@ -1,13 +1,26 @@
 import { Router } from 'express';
 import { verificarToken, verificarAdministrador } from '../middlewares/validateToken.js';
 import { validarCamposRegisterAprendiz, validarCamposRegisterProfesional, validarCamposAuch } from '../middlewares/validateAuchts.js';
-import { registroUsuarioAprendiz, registroUsuarioAdministrador, registroUsuarioProfesional, loginUsuarioProfesional, loginUsuarioAprendiz, loginUsuarioAdministrador, solicitudAccesoProfesional, aceptarProfesional, verUsuario, verUsuariosProfesionales } from '../controllers/usuarios.controllers.js';
+import { registroUsuarioAprendiz, registroUsuarioAdministrador, registroUsuarioProfesional, loginUsuarioProfesional, loginUsuarioAprendiz, loginUsuarioAdministrador, solicitudAccesoProfesional, aceptarProfesional, verUsuario, verUsuariosProfesionales} from '../controllers/usuarios.controllers.js';
+
+// imagenes
+import multer from 'multer';
+import { storage } from '../middlewares/cloudinary.js';
+const upload = multer({
+    storage: storage
+})
 
 const router = Router();
 
 router.post("/registrarAdministrador", validarCamposRegisterProfesional, verificarToken, verificarAdministrador,  registroUsuarioAdministrador);
-router.post("/registrarProfesional", validarCamposRegisterProfesional, registroUsuarioProfesional);
-router.post("/registrarAprendiz", validarCamposRegisterAprendiz, registroUsuarioAprendiz);
+
+//
+const inputProfesional = upload.fields([{name: 'imgProfesional'}]);
+router.post("/registrarProfesional", validarCamposRegisterProfesional, inputProfesional, registroUsuarioProfesional);
+
+//
+const inputAprendiz = upload.fields([{name: 'imgAprendiz'}]);
+router.post("/registrarAprendiz", validarCamposRegisterAprendiz, inputAprendiz, registroUsuarioAprendiz);
 
 router.post("/loginProfesional", validarCamposAuch, loginUsuarioProfesional);
 router.post("/loginAprendiz", validarCamposAuch, loginUsuarioAprendiz);
@@ -16,6 +29,7 @@ router.get("/solicitudesProfesional", verificarToken, verificarAdministrador,  s
 router.put("/aceptarProfesional/:id", verificarToken, verificarAdministrador,  aceptarProfesional);
 router.get("/usuario/:id", verUsuario);
 router.get("/verUsuariosProfesionales", verUsuariosProfesionales)
+
 
 
 export default router;

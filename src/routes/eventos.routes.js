@@ -17,7 +17,6 @@ const router = Router();
 
 const input = upload.fields([{name: 'eventoImg'}]);
 router.post("/crearEventos", verificarToken, verificarAdministrador, input, crearEvento);
-
 router.get("/verEventos", verEventos);
 router.get("/verEventosCronograma", verEventosCrono);
 router.put("/actualizarEvento/:id", verificarToken, verificarAdministrador, actualizaEvento);

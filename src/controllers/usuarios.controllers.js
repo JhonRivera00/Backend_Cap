@@ -34,7 +34,20 @@ export const registroUsuarioProfesional = async (req, res) => {
   try {
     const { tipo, numeroDocumento, contrasena, rol } = req.body;
 
+    let idImg = null;
+    let urlImg = null;
+
+    if (req.files.imgProfesional) {
+      const fotoEvento = await cloudinary.uploader.upload(
+        req.files.imgProfesional[0].path
+      );
+      idImg = fotoEvento.public_id;
+      urlImg = fotoEvento.secure_url;
+    }
+
     const usuarioProfesional = new Usuario(req.body);
+    usuarioProfesional.perfil.idImg = idImg;
+    usuarioProfesional.perfil.urlImg = urlImg;
     usuarioProfesional.documento.tipo = tipo;
     usuarioProfesional.documento.numeroDocumento = numeroDocumento;
     usuarioProfesional.password = await usuarioProfesional.hasPassword(
@@ -63,7 +76,20 @@ export const registroUsuarioAprendiz = async (req, res) => {
   try {
     const { tipo, numeroDocumento, contrasena } = req.body;
 
+    let idImg = null;
+    let urlImg = null;
+
+    if (req.files.imgAprendiz) {
+      const fotoEvento = await cloudinary.uploader.upload(
+        req.files.imgAprendiz[0].path
+      );
+      idImg = fotoEvento.public_id;
+      urlImg = fotoEvento.secure_url;
+    }
+
     const usuarioAprendiz = new Usuario(req.body);
+    usuarioAprendiz.perfil.idImg = idImg;
+    usuarioAprendiz.perfil.urlImg = urlImg;
     usuarioAprendiz.documento.tipo = tipo;
     usuarioAprendiz.documento.numeroDocumento = numeroDocumento;
     usuarioAprendiz.password = await usuarioAprendiz.hasPassword(contrasena);
@@ -105,21 +131,19 @@ export const loginUsuarioProfesional = async (req, res) => {
       return res.status(400).json("Contraseña Incorrecta");
     }
 
-    const aceptado = usuarioExistente.estado.aceptado;
-    const habilitado = usuarioExistente.estado.habilitado;
-    if (!aceptado || !habilitado) {
-      return res.status(400).json("!Debes esperar a ser acepetado!");
-    }
-
     const tieneRolProfesional = usuarioExistente.rol.some(
       (rol) => rol.nombre === "profesional"
     );
-    const tieneRolAdministrador = usuarioExistente.rol.some(
-      (rol) => rol.nombre === "administrador"
-    );
-    if (!tieneRolProfesional && !tieneRolAdministrador) {
+    if (!tieneRolProfesional ) {
       return res.status(400).json("!No Autorizado!");
     }
+
+    const aceptado = usuarioExistente.estado.aceptado;
+    const habilitado = usuarioExistente.estado.habilitado;
+    if (!aceptado || !habilitado) {
+      return res.status(400).json("!Debes esperar a ser aceptado!");
+    }
+
 
     const token = jwt.sign({ id: usuarioExistente._id }, JWT_SECRET, {
       expiresIn: 86400,
@@ -156,10 +180,7 @@ export const loginUsuarioAprendiz = async (req, res) => {
     const tieneRolAprendiz = usuarioExistente.rol.some(
       (rol) => rol.nombre === "aprendiz"
     );
-    const tieneRolAdministrador = usuarioExistente.rol.some(
-      (rol) => rol.nombre === "administrador"
-    );
-    if (!tieneRolAprendiz && !tieneRolAdministrador) {
+    if (!tieneRolAprendiz) {
       return res.status(400).json("!No Autorizado!");
     }
 
