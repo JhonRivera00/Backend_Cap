@@ -17,6 +17,33 @@ export const crearSolicitud = async (req, res) => {
     return res.status(500).json(" Error en el servidor ");
   }
 };
+export const verSolicitudes = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const usuarioAdmin = await Usuario.findById(id).populate("rol");
+
+    const esAdmin = usuarioAdmin.rol.some(rol => rol.nombre === 'administrador');
+
+    if(!esAdmin){
+      return res.status(400).json("No eres Administrador");
+    }
+    
+    const misSolicitudes = await Solicitudes.find({ 
+      "estado.pendiente": true, 
+      "estado.aceptada": false, 
+      "estado.aceptada": false 
+    });
+    if (!misSolicitudes) {
+      return res.status(400).json("Error al ver las solicitudes");
+    }
+
+    res.status(200).json(misSolicitudes);
+
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json(" Error en el servidor ");
+  }
+};
 
 export const verSolicitudesProfesional = async (req, res) => {
   try {
