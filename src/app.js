@@ -9,6 +9,7 @@ import programa from './routes/programa.routes.js';
 import eventos from './routes/eventos.routes.js';
 import solicitudes from './routes/solicitudes.routes.js';
 import notificacion from './routes/notificacion.routes.js';
+import pqrs from './routes/pqrs.routes.js';
 
 const app = express();
 
@@ -24,5 +25,6 @@ app.use(programa);
 app.use(eventos);
 app.use(solicitudes);
 app.use(notificacion);
+app.use(pqrs);
 
 export default app;
