@@ -44,6 +44,7 @@ export const crearPqrs = async(req, res)=>{
     }
 }
 
+
 // Esto e spar el usuario tipo administrador 
 export const responderPqrs = async(req, res)=>{
     try {
