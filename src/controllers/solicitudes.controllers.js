@@ -31,13 +31,99 @@ export const verSolicitudes = async (req, res) => {
     const misSolicitudes = await Solicitudes.find({ 
       "estado.pendiente": true, 
       "estado.aceptada": false, 
-      "estado.aceptada": false 
+      "estado.aplazada": false
+    }).populate({
+      path: 'id_aprendiz id_profesional',
+      populate: {
+        path: 'programa'
+      }
     });
+
     if (!misSolicitudes) {
       return res.status(400).json("Error al ver las solicitudes");
     }
 
     res.status(200).json(misSolicitudes);
+
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json(" Error en el servidor ");
+  }
+};
+
+export const aceptarSolicitud = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const solicitudAceptada = await Solicitudes.findByIdAndUpdate(id, {
+      "estado.pendiente": false,
+      "estado.aceptada": true,
+      "estado.aplazada": false,
+    });
+    if (!solicitudAceptada) {
+      return res.status(400).json("No se pudo aceptar la solicitud");
+    }
+
+    const usuario = solicitudAceptada.id_aprendiz;
+    const contenido = `Tu solicitud a sido aceptada, la fecha de la atención sera ${solicitudAceptada.fechaSolicitada}`;
+
+
+    const notificacionModel = new Notificaciones();
+    notificacionModel.contenido = contenido;
+    notificacionModel.usuarioId = usuario;
+    await notificacionModel.save();
+
+    const usuarioProfesional = solicitudAceptada.id_profesional;
+    const contenidoProfesional = `Tienes una una nueva cita para la fecha ${solicitudAceptada.fechaSolicitada}`;
+
+    const notificacionProfesionalModel = new Notificaciones();
+    notificacionProfesionalModel.contenido = contenidoProfesional;
+    notificacionProfesionalModel.usuarioId = usuarioProfesional;
+    await notificacionProfesionalModel.save();
+
+    res.status(200).json("Solicitud Aceptada");
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json(" Error en el servidor ");
+  }
+};
+
+export const aplazarSolicitud = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { motivo, nuevaFecha,nuevoProfesional } = req.body;
+    if (!motivo || !nuevaFecha) {
+      return res.status(400).json("Se requiere un motivo y nueva fecha");
+    }
+    const solicitudAplazada = await Solicitudes.findByIdAndUpdate(id, {
+      nuevaFechaPropuesta: nuevaFecha,
+      motivoAplazamiento: motivo,
+      "estado.pendiente": false,
+      "estado.aceptada": false,
+      "estado.aplazada": true,
+      id_profesional: nuevoProfesional,
+    }, { new: true });
+
+    if (!solicitudAplazada) {
+      return res.status(400).json("No se pudo aplazar la solicitud");
+    }
+
+    const usuario = solicitudAplazada.id_aprendiz;
+    const contenido = `Tu solicitud a sido aplazada, la nueva fecha de atencion es ${solicitudAplazada.nuevaFechaPropuesta}`;
+
+    const notificacionModel = new Notificaciones();
+    notificacionModel.contenido = contenido;
+    notificacionModel.usuarioId = usuario;
+    await notificacionModel.save();
+
+    const usuarioProfesional = solicitudAplazada.id_profesional;
+    const contenidoProfesional = `Tienes una una nueva cita para la fecha ${solicitudAplazada.nuevaFechaPropuesta}`;
+
+    const notificacionProfesionalModel = new Notificaciones();
+    notificacionProfesionalModel.contenido = contenidoProfesional;
+    notificacionProfesionalModel.usuarioId = usuarioProfesional;
+    await notificacionProfesionalModel.save();
+
+    res.status(200).json("Solicitud Aplazada");
 
   } catch (error) {
     console.log(error);
@@ -68,67 +154,6 @@ export const verSolicitudesProfesional = async (req, res) => {
 
     res.status(200).json(misSolicitudes);
 
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json(" Error en el servidor ");
-  }
-};
-
-export const aceptarSolicitud = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const solicitudAceptada = await Solicitudes.findByIdAndUpdate(id, {
-      "estado.pendiente": false,
-      "estado.aceptada": true,
-      "estado.aplazada": false,
-    });
-    if (!solicitudAceptada) {
-      return res.status(400).json("No se pudo aceptar la solicitud");
-    }
-
-    const usuario = solicitudAceptada.id_aprendiz;
-    const contenido = `Tu solicitud a sido aceptada, la fecha de la atención sera ${solicitudAceptada.fechaSolicitada}`;
-
-    const notificacionModel = new Notificaciones();
-    notificacionModel.contenido = contenido;
-    notificacionModel.usuarioId = usuario;
-    await notificacionModel.save();
-
-    res.status(200).json("Solicitud Aceptada");
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json(" Error en el servidor ");
-  }
-};
-
-export const aplazarSolicitud = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { motivo, nuevaFecha } = req.body;
-    if (!motivo || !nuevaFecha) {
-      return res.status(400).json("Se requiere un motivo y nueva fecha");
-    }
-    const solicitudAplazada = await Solicitudes.findByIdAndUpdate(id, {
-      nuevaFechaPropuesta: nuevaFecha,
-      motivoAplazamiento: motivo,
-      "estado.pendiente": false,
-      "estado.aceptada": false,
-      "estado.aplazada": true,
-    });
-
-    if (!solicitudAplazada) {
-      return res.status(400).json("No se pudo aplazar la solicitud");
-    }
-
-    const usuario = solicitudAplazada.id_aprendiz;
-    const contenido = `Tu solicitud a sido aplazada, la nueva fecha de atencion es ${solicitudAplazada.nuevaFechaPropuesta}`;
-
-    const notificacionModel = new Notificaciones();
-    notificacionModel.contenido = contenido;
-    notificacionModel.usuarioId = usuario;
-    await notificacionModel.save();
-
-    res.status(200).json("Solicitud Aplazada");
   } catch (error) {
     console.log(error);
     return res.status(500).json(" Error en el servidor ");
