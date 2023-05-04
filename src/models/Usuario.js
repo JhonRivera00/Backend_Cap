@@ -62,6 +62,10 @@ const usuarioSchema = new Schema(
             type: Schema.Types.ObjectId,
             default: null
         },
+        motivoRechazo:{
+            type:String,
+            default:null
+        },
         estado:{
             aceptado:{
                 type: Boolean,
@@ -70,6 +74,10 @@ const usuarioSchema = new Schema(
             habilitado:{
                 type: Boolean,
                 default: true
+            },
+            rechazado:{
+                type:Boolean,
+                default:false
             }
         }
     },

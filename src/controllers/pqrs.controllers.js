@@ -12,12 +12,17 @@ export const misPqrs = async(req, res)=>{
     }
 }
 
-// esto es patra el usuario tipo administrador
+// Esto es patra el usuario tipo administrador
 export const verPqrsPendientes = async(req, res)=>{
     try {
         const pqrs = await Pqrs.find({
             "estado.pendiente": true,
             "estado.respondida": false
+        }).populate({
+            path: 'id_usuario',
+            populate:{
+                path:'programa'
+            }
         })
         res.status(200).json(pqrs);
     } catch (error) {

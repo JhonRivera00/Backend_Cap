@@ -2,6 +2,7 @@ import Usuario from "../models/Usuario.js";
 import Roles from "../models/Roles.js";
 import jwt from "jsonwebtoken";
 import { JWT_SECRET } from "../config.js";
+import cloudinary from 'cloudinary'
 
 export const registroUsuarioAdministrador = async (req, res) => {
   try {
@@ -31,6 +32,7 @@ export const registroUsuarioAdministrador = async (req, res) => {
 };
 
 export const registroUsuarioProfesional = async (req, res) => {
+  
   try {
     const { tipo, numeroDocumento, contrasena, rol } = req.body;
 
@@ -239,12 +241,39 @@ export const loginUsuarioAdministrador = async (req, res) => {
 
 export const solicitudAccesoProfesional = async (req, res) => {
   try {
-    const usuarios = await Usuario.find({"estado.aceptado": false, "estado.habilitado": false }).populate("rol");
+    const usuarios = await Usuario.find({"estado.aceptado": false, "estado.habilitado": false,
+    "estado.rechazado":false }).populate("rol");
 
     if (!usuarios) {
       return res
         .status(400)
         .json("!Error al traer las solicitdes de acceso como profesional!");
+    }
+
+    const usuariosConRolProfesional = [];
+
+    usuarios.forEach((usuario) => {
+      if (usuario.rol && usuario.rol.length > 0) {
+        usuario.rol.forEach((rol) => {
+          if (rol.nombre === "profesional") {
+            usuariosConRolProfesional.push(usuario);
+          }
+        });
+      }
+    });
+
+    res.status(200).json(usuariosConRolProfesional);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json(" Error en el servidor ");
+  }
+};
+export const solicitudRechazadasProfesional = async (req, res) => {
+  try {
+    const usuarios = await Usuario.find({"estado.aceptado": false, "estado.habilitado": false,"estado.rechazado":true }).populate("rol");
+
+    if (!usuarios) {
+      return res.status(400).json("!Error al traer las solicitdes de acceso como profesional!");
     }
 
     const usuariosConRolProfesional = [];
@@ -272,11 +301,34 @@ export const aceptarProfesional = async (req, res) => {
     const profesionaAceptado = await Usuario.findByIdAndUpdate(id, {
       "estado.aceptado": true,
       "estado.habilitado": true,
+      "estado.rechazado":false,
     });
     if (!profesionaAceptado) {
       return res.status(400).json("!No Se pudo aceptar el profesional!");
     }
     res.status(200).json("Profesional Aceptado");
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json(" Error en el servidor ");
+  }
+};
+export const rechazarProfesional = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { motivoRechazo }= req.body;
+    if(!motivoRechazo){
+      return res.status(400).json("! Se requiere un motivo de rechazo !")
+    }
+    const profesionaRechazado = await Usuario.findByIdAndUpdate(id, {
+      "estado.aceptado": false,
+      "estado.habilitado": false,
+      "estado.rechazado": true,
+      motivoRechazo:motivoRechazo
+    });
+    if (!profesionaRechazado) {
+      return res.status(400).json("! No se pudo rechazar el profesional !");
+    }
+    res.status(200).json("Profesional Rechazado");
   } catch (error) {
     console.log(error);
     return res.status(500).json(" Error en el servidor ");

@@ -1,11 +1,11 @@
 import Usuario from '../models/Usuario.js';
 
 export const validarCamposRegisterProfesional = async(req, res, next)=>{
+
     const { nombres, apellidos, tipo, numeroDocumento, genero, correo, numTelefono, profesion, contrasena, rol } = req.body;
     if(!nombres || !apellidos || !tipo || !numeroDocumento || !genero || !correo || !numTelefono || !profesion || !contrasena || !rol){
         return res.status(400).json("Todos los datos son requeridos");
     }
-
     const numIdentidadExistente = await Usuario.findOne({ "documento.numeroDocumento": numeroDocumento})
     if(numIdentidadExistente){
         return res.status(400).json("Numero de indetidad ya Registrado");
