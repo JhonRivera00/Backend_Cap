@@ -1,11 +1,10 @@
 import Solicitudes from "../models/Solicitudes.js";
 import Notificaciones from "../models/Notificaciones.js";
-import Usuario from '../models/Usuario.js';
-
+import Usuario from "../models/Usuario.js";
 export const crearSolicitud = async (req, res) => {
   try {
     const { fechaSolicitada, motivo, id_aprendiz, id_profesional } = req.body;
-    if ( !fechaSolicitada || !motivo || !id_aprendiz || !id_profesional ) {
+    if (!fechaSolicitada || !motivo || !id_aprendiz || !id_profesional) {
       return res.status(400).json("Todos los datos son requeridos");
     }
     const solicitudesModel = new Solicitudes(req.body);
@@ -22,21 +21,23 @@ export const verSolicitudes = async (req, res) => {
     const { id } = req.params;
     const usuarioAdmin = await Usuario.findById(id).populate("rol");
 
-    const esAdmin = usuarioAdmin.rol.some(rol => rol.nombre === 'administrador');
+    const esAdmin = usuarioAdmin.rol.some(
+      (rol) => rol.nombre === "administrador"
+    );
 
-    if(!esAdmin){
+    if (!esAdmin) {
       return res.status(400).json("No eres Administrador");
     }
-    
-    const misSolicitudes = await Solicitudes.find({ 
-      "estado.pendiente": true, 
-      "estado.aceptada": false, 
-      "estado.aplazada": false
+
+    const misSolicitudes = await Solicitudes.find({
+      "estado.pendiente": true,
+      "estado.aceptada": false,
+      "estado.aplazada": false,
     }).populate({
-      path: 'id_aprendiz id_profesional',
+      path: "id_aprendiz id_profesional",
       populate: {
-        path: 'programa'
-      }
+        path: "programa",
+      },
     });
 
     if (!misSolicitudes) {
@@ -44,7 +45,6 @@ export const verSolicitudes = async (req, res) => {
     }
 
     res.status(200).json(misSolicitudes);
-
   } catch (error) {
     console.log(error);
     return res.status(500).json(" Error en el servidor ");
@@ -65,7 +65,6 @@ export const aceptarSolicitud = async (req, res) => {
 
     const usuario = solicitudAceptada.id_aprendiz;
     const contenido = `Tu solicitud a sido aceptada, la fecha de la atención sera ${solicitudAceptada.fechaSolicitada}`;
-
 
     const notificacionModel = new Notificaciones();
     notificacionModel.contenido = contenido;
@@ -90,29 +89,47 @@ export const aceptarSolicitud = async (req, res) => {
 export const aplazarSolicitud = async (req, res) => {
   try {
     const { id } = req.params;
-    const { motivo, nuevaFecha,nuevoProfesional } = req.body;
+    const { motivo, nuevaFecha, nuevoProfesional } = req.body;
     if (!motivo || !nuevaFecha) {
       return res.status(400).json("Se requiere un motivo y nueva fecha");
     }
-    const solicitudAplazada = await Solicitudes.findByIdAndUpdate(id, {
-      nuevaFechaPropuesta: nuevaFecha,
-      motivoAplazamiento: motivo,
-      "estado.pendiente": false,
-      "estado.aceptada": false,
-      "estado.aplazada": true,
-      id_profesional: nuevoProfesional,
-    }, { new: true });
+    const solicitudAplazada = await Solicitudes.findByIdAndUpdate(
+      id,
+      {
+        nuevaFechaPropuesta: nuevaFecha,
+        motivoAplazamiento: motivo,
+        "estado.pendiente": false,
+        "estado.aceptada": false,
+        "estado.aplazada": true,
+        id_profesional: nuevoProfesional,
+      },
+      { new: true }
+    );
 
     if (!solicitudAplazada) {
       return res.status(400).json("No se pudo aplazar la solicitud");
     }
-
     const usuario = solicitudAplazada.id_aprendiz;
-    const contenido = `Tu solicitud a sido aplazada, la nueva fecha de atencion es ${solicitudAplazada.nuevaFechaPropuesta}`;
+    ///////////////////////////////////////////////////////////////////
+    let fecha = new Date(solicitudAplazada.nuevaFechaPropuesta);
+    let dia = fecha.getDate();
+    let mes = fecha.getMonth();
+    let anio = fecha.getFullYear();
+    let meses = ["enero","febrero","marzo","abril","mayo", "junio","julio","agosto","septiembre","octubre",
+      "noviembre","diciembre", ];
+    let nombreMes = meses[mes];
+    let hora = fecha.getHours();
+    let minutos = fecha.getMinutes();
+    let cadenaFecha = `${dia} de ${nombreMes} del ${anio} a las ${hora}:${minutos} ${
+      hora >= 12 ? "pm" : "am"
+    }`;
+
+    const contenido = `Tu solicitud a sido aplazada, la nueva fecha de atencion es ${cadenaFecha}`;
 
     const notificacionModel = new Notificaciones();
     notificacionModel.contenido = contenido;
     notificacionModel.usuarioId = usuario;
+    notificacionModel.motivo = motivo;
     await notificacionModel.save();
 
     const usuarioProfesional = solicitudAplazada.id_profesional;
@@ -124,7 +141,6 @@ export const aplazarSolicitud = async (req, res) => {
     await notificacionProfesionalModel.save();
 
     res.status(200).json("Solicitud Aplazada");
-
   } catch (error) {
     console.log(error);
     return res.status(500).json(" Error en el servidor ");
@@ -136,27 +152,27 @@ export const verSolicitudesProfesional = async (req, res) => {
     const { id } = req.params;
     const usuarioProfesional = await Usuario.findById(id).populate("rol");
 
-    const esProfesional = usuarioProfesional.rol.some(rol => rol.nombre === 'profesional');
+    const esProfesional = usuarioProfesional.rol.some(
+      (rol) => rol.nombre === "profesional"
+    );
 
-    if(!esProfesional){
+    if (!esProfesional) {
       return res.status(400).json("No eres un Profesional");
     }
-    
-    const misSolicitudes = await Solicitudes.find({ 
-      id_profesional: id, 
-      "estado.pendiente": true, 
-      "estado.aceptada": false, 
-      "estado.aceptada": false 
+
+    const misSolicitudes = await Solicitudes.find({
+      id_profesional: id,
+      "estado.pendiente": true,
+      "estado.aceptada": false,
+      "estado.aceptada": false,
     });
     if (!misSolicitudes) {
       return res.status(400).json("Error al ver mis solicitudes");
     }
 
     res.status(200).json(misSolicitudes);
-
   } catch (error) {
     console.log(error);
     return res.status(500).json(" Error en el servidor ");
   }
 };
-

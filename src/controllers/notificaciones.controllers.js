@@ -13,3 +13,20 @@ export const misNotificaciones = async(req, res)=>{
         return res.status(500).json(" Error en el servidor ");
     }
 }
+
+export const notificacionesAbiertas = async (req,res)=>{
+
+    try {
+    const {id} = req.params;
+    const estadoSolicitud = await Notificaciones.findByIdAndUpdate(id, {
+        "estado": true,
+    });
+
+    res.status(200).json("Notificacion vista");
+        
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json("Error en el sevridor");
+    }
+
+}

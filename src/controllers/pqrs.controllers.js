@@ -53,7 +53,7 @@ export const crearPqrs = async(req, res)=>{
 // Esto e spar el usuario tipo administrador 
 export const responderPqrs = async(req, res)=>{
     try {
-        const { id } = req.params;
+        const { id } = req.params;  
         const { respuesta } = req.body;
         if(!respuesta){
             return res.status(400).json("Todos los datos son requeridos")
