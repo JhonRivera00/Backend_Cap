@@ -2,6 +2,9 @@ import { Schema, model } from "mongoose";
 
 const notificacionesSchema = new Schema(
   {
+    titulo:{
+      type:String,
+    },
     contenido: {
       type: String,
     },
@@ -14,6 +17,17 @@ const notificacionesSchema = new Schema(
     },
     usuarioId: {
       ref: "Usuarios",
+      type: Schema.Types.ObjectId
+    },
+    profesionalId:{
+      ref:"Usuarios",
+      type: Schema.Types.ObjectId
+    },
+    fechaAplazada:{
+      type:String
+    },
+    aprendizId:{
+      ref : "Usuarios",
       type: Schema.Types.ObjectId
     }
   },

@@ -3,7 +3,7 @@ import Notificaciones from '../models/Notificaciones.js';
 export const misNotificaciones = async(req, res)=>{
     try {
         const { id } = req.params;
-        const misNotis = await Notificaciones.find({ usuarioId: id }).lean();
+        const misNotis = await Notificaciones.find({ usuarioId: id }).lean().populate("profesionalId aprendizId");
         if(!misNotis){
             return res.status(400).json("Error al mostrar mis notificaciones");
         }
@@ -18,7 +18,7 @@ export const notificacionesAbiertas = async (req,res)=>{
 
     try {
     const {id} = req.params;
-    const estadoSolicitud = await Notificaciones.findByIdAndUpdate(id, {
+     await Notificaciones.findByIdAndUpdate(id, {
         "estado": true,
     });
 

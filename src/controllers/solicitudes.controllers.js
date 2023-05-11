@@ -64,18 +64,33 @@ export const aceptarSolicitud = async (req, res) => {
     }
 
     const usuario = solicitudAceptada.id_aprendiz;
-    const contenido = `Tu solicitud a sido aceptada, la fecha de la atención sera ${solicitudAceptada.fechaSolicitada}`;
+    let fecha = new Date(solicitudAceptada.fechaSolicitada);
+    let dia = fecha.getDate();
+    let mes = fecha.getMonth();
+    let anio = fecha.getFullYear();
+    let meses = ["enero","febrero","marzo","abril","mayo", "junio","julio","agosto","septiembre","octubre",
+      "noviembre","diciembre", ];
+    let nombreMes = meses[mes];
+    let hora = fecha.getHours();
+    let minutos = fecha.getMinutes();
+    let cadenaFecha = `${dia} de ${nombreMes} del ${anio} a las ${hora}:${minutos} ${
+      hora >= 12 ? "pm" : "am"
+    }`;
+    const contenido = `Tu solicitud ha sido aceptada, la fecha de la atención sera ${cadenaFecha}`;
 
     const notificacionModel = new Notificaciones();
+    notificacionModel.titulo = "Solicitud Aceptada";
     notificacionModel.contenido = contenido;
     notificacionModel.usuarioId = usuario;
     await notificacionModel.save();
 
     const usuarioProfesional = solicitudAceptada.id_profesional;
-    const contenidoProfesional = `Tienes una una nueva cita para la fecha ${solicitudAceptada.fechaSolicitada}`;
+    const contenidoProfesional = `Tienes una una nueva cita para la fecha ${cadenaFecha}`;
 
     const notificacionProfesionalModel = new Notificaciones();
+    notificacionProfesionalModel.titulo = " Nueva Charla ";
     notificacionProfesionalModel.contenido = contenidoProfesional;
+    notificacionProfesionalModel.fechaAplazada = cadenaFecha;
     notificacionProfesionalModel.usuarioId = usuarioProfesional;
     await notificacionProfesionalModel.save();
 
@@ -127,17 +142,24 @@ export const aplazarSolicitud = async (req, res) => {
     const contenido = `Tu solicitud a sido aplazada, la nueva fecha de atencion es ${cadenaFecha}`;
 
     const notificacionModel = new Notificaciones();
+    notificacionModel.titulo = "Solicitud Aplazada";    
     notificacionModel.contenido = contenido;
     notificacionModel.usuarioId = usuario;
+    notificacionModel.fechaAplazada = cadenaFecha;
+    notificacionModel.profesionalId = nuevoProfesional
     notificacionModel.motivo = motivo;
     await notificacionModel.save();
 
+
     const usuarioProfesional = solicitudAplazada.id_profesional;
-    const contenidoProfesional = `Tienes una una nueva cita para la fecha ${solicitudAplazada.nuevaFechaPropuesta}`;
+    const contenidoProfesional = `Tienes una una nueva cita para el dia ${cadenaFecha}`;
 
     const notificacionProfesionalModel = new Notificaciones();
+    notificacionProfesionalModel.titulo = "Nueva Charla";
     notificacionProfesionalModel.contenido = contenidoProfesional;
-    notificacionProfesionalModel.usuarioId = usuarioProfesional;
+    notificacionProfesionalModel.usuarioId = usuarioProfesional
+    notificacionProfesionalModel.fechaAplazada = cadenaFecha;
+    notificacionProfesionalModel.aprendizId = usuario;
     await notificacionProfesionalModel.save();
 
     res.status(200).json("Solicitud Aplazada");
