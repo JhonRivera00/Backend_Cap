@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { verificarToken, verificarAdministrador } from '../middlewares/validateToken.js';
 import { validarCamposRegisterAprendiz, validarCamposRegisterProfesional, validarCamposAuch } from '../middlewares/validateAuchts.js';
-import { registroUsuarioAprendiz, registroUsuarioAdministrador, registroUsuarioProfesional, loginUsuarioProfesional, loginUsuarioAprendiz, loginUsuarioAdministrador, solicitudAccesoProfesional, aceptarProfesional, verUsuario, verUsuariosProfesionales, rechazarProfesional, solicitudRechazadasProfesional} from '../controllers/usuarios.controllers.js';
+import { registroUsuarioAprendiz, registroUsuarioAdministrador, registroUsuarioProfesional, loginUsuarioProfesional, loginUsuarioAprendiz, loginUsuarioAdministrador, solicitudAccesoProfesional, aceptarProfesional, verUsuario, verUsuariosProfesionales, rechazarProfesional, solicitudRechazadasProfesional, verUsuarios} from '../controllers/usuarios.controllers.js';
 
 // imagenes
 import multer from 'multer';
@@ -30,6 +30,7 @@ router.put("/aceptarProfesional/:id", verificarToken, verificarAdministrador,  a
 router.get("/solicitudesRechazadasProfesional",verificarToken, verificarAdministrador,solicitudRechazadasProfesional)
 router.put("/rechazarProfesional/:id", verificarToken,verificarAdministrador,rechazarProfesional);
 router.get("/usuario/:id", verUsuario);
+router.get("/verUsuarios", verUsuarios);
 router.get("/verUsuariosProfesionales", verUsuariosProfesionales)
 
 

@@ -5,7 +5,6 @@ import Usuario from '../models/Usuario.js';
 export const verificarToken = async(req, res, next)=>{
     try {
         const token = req.headers["acceso-token"];
-        console.log(token);
         if(!token){
             return res.status(400).json("Se requiere el token");
         }

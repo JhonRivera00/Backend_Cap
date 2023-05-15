@@ -20,8 +20,15 @@ const eventosSchema = new Schema(
                 default: null
             }
         },
-        multimedia:{
-            type: String
+        pdf:{
+            idPdf:{
+                type: String,
+                default: null
+            },
+            urlPdf:{
+                type: String,
+                default: null
+            }
         },
         fecha_inicio:{
             type: Date,
@@ -39,6 +46,10 @@ const eventosSchema = new Schema(
         estado:{
             type: Boolean,
             default: true
+        },
+        lugar:{
+            type:String,
+            default:null
         }
 
     },

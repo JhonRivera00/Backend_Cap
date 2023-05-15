@@ -31,7 +31,7 @@ export const registroUsuarioAdministrador = async (req, res) => {
   }
 };
 
-export const registroUsuarioProfesional = async (req, res) => {
+export const  registroUsuarioProfesional = async (req, res) => {
   
   try {
     const { tipo, numeroDocumento, contrasena, rol } = req.body;
@@ -340,6 +340,20 @@ export const verUsuario = async(req, res)=>{
   try {
     const { id } = req.params;
     const usuario = await Usuario.findById(id).populate("rol");
+
+    if(!usuario){
+      return res.status(400).json("Error al traer el usuario");
+    }
+
+    res.status(200).json(usuario);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json(" Error en el servidor ");
+  }
+}
+export const verUsuarios = async(req, res)=>{
+  try {
+    const usuario = await Usuario.find();
 
     if(!usuario){
       return res.status(400).json("Error al traer el usuario");

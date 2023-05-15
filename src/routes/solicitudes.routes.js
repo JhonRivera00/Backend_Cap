@@ -1,6 +1,5 @@
 import { Router } from 'express';
 import { crearSolicitud, aceptarSolicitud, aplazarSolicitud, verSolicitudes, verSolicitudesProfesional} from '../controllers/solicitudes.controllers.js';
-import { verificarAdministrador, verificarToken } from '../middlewares/validateToken.js';
 
 const router = Router();
 

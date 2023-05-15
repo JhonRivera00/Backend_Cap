@@ -1,11 +1,8 @@
 import { Router } from 'express';
-
 // controllers
-import { crearEvento, verEventos, verEventosCrono, actualizaEvento } from '../controllers/eventos.controllers.js';
-
+import { crearEvento, verEventos,  actualizaEvento } from '../controllers/eventos.controllers.js';
 // Verificaciones
 import { verificarToken, verificarAdministrador } from '../middlewares/validateToken.js';
-
 // imagenes
 import multer from 'multer';
 import { storage } from '../middlewares/cloudinary.js';
@@ -15,10 +12,9 @@ const upload = multer({
 
 const router = Router();
 
-const input = upload.fields([{name: 'eventoImg'}]);
-router.post("/crearEventos", verificarToken, verificarAdministrador, input, crearEvento);
+const inputImg = upload.fields([{ name: 'eventoImg', maxCount: 1 },{ name: 'pdf', maxCount: 1 }]);
+router.post("/crearEventos", verificarToken, verificarAdministrador, inputImg, crearEvento);
 router.get("/verEventos", verEventos);
-router.get("/verEventosCronograma", verEventosCrono);
 router.put("/actualizarEvento/:id", verificarToken, verificarAdministrador, actualizaEvento);
 
 export default router;
