@@ -77,14 +77,16 @@ export const aceptarSolicitud = async (req, res) => {
       hora >= 12 ? "pm" : "am"
     }`;
     const contenido = `Tu solicitud ha sido aceptada, la fecha de la atención sera ${cadenaFecha}`;
-
+    
+    const usuarioProfesional = solicitudAceptada.id_profesional;
     const notificacionModel = new Notificaciones();
     notificacionModel.titulo = "Solicitud Aceptada";
     notificacionModel.contenido = contenido;
     notificacionModel.usuarioId = usuario;
+    notificacionModel.fechaAplazada = cadenaFecha;
+    notificacionModel.profesionalId = usuarioProfesional
     await notificacionModel.save();
 
-    const usuarioProfesional = solicitudAceptada.id_profesional;
     const contenidoProfesional = `Tienes una una nueva cita para la fecha ${cadenaFecha}`;
 
     const notificacionProfesionalModel = new Notificaciones();
