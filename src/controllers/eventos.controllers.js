@@ -4,6 +4,7 @@ import Eventos from "../models/Eventos.js";
 
 export const crearEvento = async (req, res) => {
   try {
+    console.log(req.body);
     const { titulo, descripcion, fecha_inicio, fecha_final, tipo } = req.body;
     if (!titulo || !descripcion || !fecha_inicio || !fecha_final || !tipo) {
       return res.status(400).json("Todos los datos son requeridos");
