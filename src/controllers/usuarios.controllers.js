@@ -251,7 +251,7 @@ export const loginUsuarioProfesional = async (req, res) => {
 
 
     const token = jwt.sign({ id: usuarioExistente._id }, JWT_SECRET, {
-      expiresIn: 3600000,
+      expiresIn: 18000000,
     });
 
     res.status(200).json({
@@ -290,7 +290,7 @@ export const loginUsuarioAprendiz = async (req, res) => {
     }
 
     const token = jwt.sign({ id: usuarioExistente._id }, JWT_SECRET, {
-      expiresIn: 3600000,
+      expiresIn: 18000000,
     });
 
     res.status(200).json({
@@ -329,7 +329,7 @@ export const loginUsuarioAdministrador = async (req, res) => {
     }
 
     const token = jwt.sign({ id: usuarioExistente._id }, JWT_SECRET, {
-      expiresIn: 3600000,
+      expiresIn: 18000000,
     });
 
     res.status(200).json({
