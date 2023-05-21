@@ -128,9 +128,9 @@ if(req.files.imgAprendiz){
   let urlImg = null;
 
   if (req.files && req.files.imgAprendiz) { 
-    const fotoEvento = await cloudinary.uploader.upload(req.files.imgAprendiz[0].path);
-    idImg = fotoEvento.public_id;
-    urlImg = fotoEvento.secure_url;
+    const fotoAprendiz = await cloudinary.uploader.upload(req.files.imgAprendiz[0].path);
+    idImg = fotoAprendiz.public_id;
+    urlImg = fotoAprendiz.secure_url;
   }
 
   const usuario = await Usuario.findByIdAndUpdate(id, {
@@ -198,7 +198,7 @@ export const loginUsuarioProfesional = async (req, res) => {
 
 
     const token = jwt.sign({ id: usuarioExistente._id }, JWT_SECRET, {
-      expiresIn: 86400,
+      expiresIn: 3600000,
     });
 
     res.status(200).json({
@@ -237,7 +237,7 @@ export const loginUsuarioAprendiz = async (req, res) => {
     }
 
     const token = jwt.sign({ id: usuarioExistente._id }, JWT_SECRET, {
-      expiresIn: 86400,
+      expiresIn: 3600000,
     });
 
     res.status(200).json({
@@ -276,7 +276,7 @@ export const loginUsuarioAdministrador = async (req, res) => {
     }
 
     const token = jwt.sign({ id: usuarioExistente._id }, JWT_SECRET, {
-      expiresIn: 86400,
+      expiresIn: 3600000,
     });
 
     res.status(200).json({
@@ -405,7 +405,7 @@ export const verUsuario = async (req, res) => {
 }
 export const verUsuarios = async (req, res) => {
   try {
-    const usuario = await Usuario.find()
+    const usuario = await Usuario.find().populate("programa")
 
     if (!usuario) {
       return res.status(400).json("Error al traer el usuario");
