@@ -8,7 +8,8 @@ const programaSchema = new Schema(
         },
         ficha:{
             type: Number,
-            required: true
+            required: true,
+            unique:true
         },
         fecha_inicio:{
             type: Date,

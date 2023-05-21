@@ -6,6 +6,10 @@ export const crearPrograma = async (req, res) => {
     if (!nombre | !ficha || !fecha_inicio || !fecha_final || !jornada) {
       return res.status(400).json("!Todos los datos son requeridos");
     }
+    const verficha = await Programa.findOne({ficha:ficha})
+    if(verficha){
+      return res.status(400).json("Numero de ficha ya existe")
+    }
 
     const programaModel = new Programa(req.body);
     await programaModel.save();

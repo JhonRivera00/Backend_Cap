@@ -114,7 +114,60 @@ export const registroUsuarioAprendiz = async (req, res) => {
     return res.status(500).json(" Error en el servidor ");
   }
 };
+export const actualizarProfesional = async (req, res) => {
+  try {
+    const { nombres, apellidos, correo, genero, numTelefono, profesion } =
+      req.body;
+      const { id } = req.params;
 
+      
+      if (req.files.imgProfesional) {
+      let idImg = null;
+      let urlImg = null;
+
+      if (req.files && req.files.imgProfesional) {
+        const fotoProfesional = await cloudinary.uploader.upload(
+          req.files.imgProfesional[0].path
+        );
+        idImg = fotoProfesional.public_id;
+        urlImg = fotoProfesional.secure_url;
+
+        const profesional = await Usuario.findByIdAndUpdate(
+          id,
+          {
+            "perfil.idImg": idImg,
+            "perfil.urlImg": urlImg,
+            nombres: nombres,
+            apellidos: apellidos,
+            correo: correo,
+            profesion: profesion,
+            genero: genero,
+            numTelefono: numTelefono,
+          },
+          { new: true }
+        );
+      }
+    } else {
+      const profesional = await Usuario.findByIdAndUpdate(
+        id,
+        {
+          nombres: nombres,
+          apellidos: apellidos,
+          correo: correo,
+          profesion: profesion,
+          genero: genero,
+          numTelefono: numTelefono,
+        },
+        { new: true }
+      );
+    }
+
+    res.status(200).json("Usuarios actualizado");
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json("Error en el servidor");
+  }
+};
 
 export const actualizarAprendiz = async (req, res) => {
   try {

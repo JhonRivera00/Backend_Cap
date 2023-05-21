@@ -36,7 +36,7 @@ export const verificarProfesional = async(req, res, next)=>{
     const usuarioProfesional = await Usuario.findById(req.usuarioId).populate("rol");
     const isProfesional = usuarioProfesional.rol.some((rol)=> rol.nombre === "profesional")
     if(!isProfesional){
-        return res.status(400).json("No eres usuario Presional");
+        return res.status(400).json("No eres usuario Profesional");
     }
     next()
 }
