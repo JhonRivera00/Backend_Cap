@@ -458,7 +458,7 @@ export const verUsuario = async (req, res) => {
 }
 export const verUsuarios = async (req, res) => {
   try {
-    const usuario = await Usuario.find().populate("programa")
+    const usuario = await Usuario.find().populate("programa rol")
 
     if (!usuario) {
       return res.status(400).json("Error al traer el usuario");
