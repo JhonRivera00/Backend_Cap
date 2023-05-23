@@ -43,6 +43,7 @@ export const verificarProfesional = async(req, res, next)=>{
 
 
 export const verificarAprendiz = async(req, res, next)=>{
+    console.log(req.body)
     const usuarioAprenidiz = await Usuario.findById(req.usuarioId).populate("rol");
     const isAprendiz = usuarioAprenidiz.rol.some((rol)=> rol.nombre === "aprendiz")
     if(!isAprendiz){
