@@ -1,21 +1,37 @@
 import Solicitudes from "../models/Solicitudes.js";
 import Notificaciones from "../models/Notificaciones.js";
 import Usuario from "../models/Usuario.js";
+import moment from 'moment'
+import { fechaLocal } from './../funciones/fechaLocal.js';
+
+let ultimoTiempoSolicitud = {};
+
 export const crearSolicitud = async (req, res) => {
   try {
     const { fechaSolicitada, motivo, id_aprendiz, id_profesional } = req.body;
     if (!fechaSolicitada || !motivo || !id_aprendiz || !id_profesional) {
       return res.status(400).json("Todos los datos son requeridos");
     }
+    
+    if (ultimoTiempoSolicitud[id_aprendiz]) {
+      const tiempoTranscurrido = moment().diff(ultimoTiempoSolicitud[id_aprendiz], 'minutes');
+      if (tiempoTranscurrido < 30) {
+        return res.status(400).json("Debes esperar al menos 30 minutos antes de crear otra solicitud");
+      }
+    }
+    
     const solicitudesModel = new Solicitudes(req.body);
     await solicitudesModel.save();
-
+    
+    ultimoTiempoSolicitud[id_aprendiz] = moment();
+    
     res.status(200).json("Solicitud enviada correctamente");
   } catch (error) {
     console.log(error);
-    return res.status(500).json(" Error en el servidor ");
+    return res.status(500).json("Error en el servidor");
   }
 };
+
 export const verSolicitudes = async (req, res) => {
   try {
     const { id } = req.params;
@@ -64,18 +80,7 @@ export const aceptarSolicitud = async (req, res) => {
     }
 
     const usuario = solicitudAceptada.id_aprendiz;
-    let fecha = new Date(solicitudAceptada.fechaSolicitada);
-    let dia = fecha.getDate();
-    let mes = fecha.getMonth();
-    let anio = fecha.getFullYear();
-    let meses = ["enero","febrero","marzo","abril","mayo", "junio","julio","agosto","septiembre","octubre",
-      "noviembre","diciembre", ];
-    let nombreMes = meses[mes];
-    let hora = fecha.getHours();
-    let minutos = fecha.getMinutes();
-    let cadenaFecha = `${dia} de ${nombreMes} del ${anio} a las ${hora}:${minutos} ${
-      hora >= 12 ? "pm" : "am"
-    }`;
+   const cadenaFecha = fechaLocal(solicitudAceptada.fechaSolicitada)
     const contenido = `Tu solicitud ha sido aceptada, la fecha de la atención sera ${cadenaFecha}`;
     
     const usuarioProfesional = solicitudAceptada.id_profesional;
@@ -127,19 +132,7 @@ export const aplazarSolicitud = async (req, res) => {
       return res.status(400).json("No se pudo aplazar la solicitud");
     }
     const usuario = solicitudAplazada.id_aprendiz;
-    ///////////////////////////////////////////////////////////////////
-    let fecha = new Date(solicitudAplazada.nuevaFechaPropuesta);
-    let dia = fecha.getDate();
-    let mes = fecha.getMonth();
-    let anio = fecha.getFullYear();
-    let meses = ["enero","febrero","marzo","abril","mayo", "junio","julio","agosto","septiembre","octubre",
-      "noviembre","diciembre", ];
-    let nombreMes = meses[mes];
-    let hora = fecha.getHours();
-    let minutos = fecha.getMinutes();
-    let cadenaFecha = `${dia} de ${nombreMes} del ${anio} a las ${hora}:${minutos} ${
-      hora >= 12 ? "pm" : "am"
-    }`;
+   const cadenaFecha = fechaLocal(solicitudAplazada.nuevaFechaPropuesta)
 
     const contenido = `Tu solicitud a sido aplazada, la nueva fecha de atencion es ${cadenaFecha}`;
 

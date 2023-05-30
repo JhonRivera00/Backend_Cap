@@ -1,3 +1,4 @@
+import Notificaciones from "../models/Notificaciones.js";
 import Pqrs from "../models/Pqrs.js";
 
 // Esto es para el usuairo tipo aprendiz
@@ -63,7 +64,17 @@ export const responderPqrs = async(req, res)=>{
             "estado.pendiente": false,
             "estado.respondida": true,
         });
+        const usuario = pqrsRes.id_usuario
+        const motivo = pqrsRes.tipo
+       console.log(pqrsRes)
 
+        const notificacionModel = new Notificaciones()
+        notificacionModel.titulo = "Respuesta PQRS";    
+        notificacionModel.contenido = respuesta;
+        notificacionModel.motivo = motivo;
+        notificacionModel.usuarioId = usuario;
+        await notificacionModel.save();
+        
         res.status(200).json("Pqrs respondida exitodamente");
 
     } catch (error) {

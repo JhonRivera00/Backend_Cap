@@ -496,3 +496,43 @@ export const verUsuariosProfesionales = async (req, res) => {
     return res.status(500).json(" Error en el servidor ");
   }
 };
+export const inhabilitarUsuario = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const usuarioInhabilitado = await Usuario.findByIdAndUpdate(
+      id,
+      { "estado.habilitado": false },
+      { new: true }
+    );
+
+    if (!usuarioInhabilitado) {
+      return res.status(400).json("No se pudo inhabilitar el usuario");
+    }
+
+    res.status(200).json("Usuario inhabilitado");
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json("Error en el servidor");
+  }
+};
+export const habilitarUsuario = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const usuarioInhabilitado = await Usuario.findByIdAndUpdate(
+      id,
+      { "estado.habilitado": true },
+      { new: true }
+    );
+
+    if (!usuarioInhabilitado) {
+      return res.status(400).json("No se pudo habilitar el usuario");
+    }
+
+    res.status(200).json("Usuario habilitado");
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json("Error en el servidor");
+  }
+};
