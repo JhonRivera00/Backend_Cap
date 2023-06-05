@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { verificarToken, verificarAdministrador } from '../middlewares/validateToken.js';
 import { validarCamposRegisterAprendiz, validarCamposRegisterProfesional, validarCamposAuch } from '../middlewares/validateAuchts.js';
-import { registroUsuarioAprendiz, registroUsuarioAdministrador, registroUsuarioProfesional, loginUsuarioProfesional, loginUsuarioAprendiz, loginUsuarioAdministrador, solicitudAccesoProfesional, aceptarProfesional, verUsuario, verUsuariosProfesionales, rechazarProfesional, solicitudRechazadasProfesional, verUsuarios, actualizarAprendiz, actualizarProfesional, inhabilitarUsuario, habilitarUsuario} from '../controllers/usuarios.controllers.js';
+import { registroUsuarioAprendiz, registroUsuarioAdministrador, registroUsuarioProfesional, loginUsuarioProfesional, loginUsuarioAprendiz, loginUsuarioAdministrador, solicitudAccesoProfesional, aceptarProfesional, verUsuario, verUsuariosProfesionales, rechazarProfesional, solicitudRechazadasProfesional, verUsuarios, actualizarAprendiz, actualizarProfesional, inhabilitarUsuario, habilitarUsuario, inhabilitarProfesional, habilitarProfesional, verProfesionales} from '../controllers/usuarios.controllers.js';
 
 // imagenes
 import multer from 'multer';
@@ -36,6 +36,9 @@ router.get("/verUsuarios", verUsuarios);
 router.get("/verUsuariosProfesionales", verUsuariosProfesionales)
 router.put("/inhabilitarUsuario/:id",inhabilitarUsuario)
 router.put("/habilitarUsuario/:id",habilitarUsuario)
+router.put("/inhabilitarProfesional/:id",inhabilitarProfesional)
+router.put("/habilitarProfesional/:id",habilitarProfesional)
+router.get("/verProfesionales",verProfesionales)
 
 
 

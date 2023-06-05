@@ -536,3 +536,66 @@ export const habilitarUsuario = async (req, res) => {
     return res.status(500).json("Error en el servidor");
   }
 };
+
+export const inhabilitarProfesional = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const usuarioInhabilitado = await Usuario.findByIdAndUpdate(
+      id,
+      { "estado.habilitado": false },
+      { new: true }
+    );
+
+    if (!usuarioInhabilitado) {
+      return res.status(400).json("No se pudo inhabilitar el Profesional");
+    }
+
+    res.status(200).json("Profesional inhabilitado");
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json("Error en el servidor");
+  }
+};
+
+export const habilitarProfesional = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const usuarioInhabilitado = await Usuario.findByIdAndUpdate(
+      id,
+      { "estado.habilitado": true },
+      { new: true }
+    );
+
+    if (!usuarioInhabilitado) {
+      return res.status(400).json("No se pudo habilitar el profesional");
+    }
+
+    res.status(200).json("Profesional habilitado");
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json("Error en el servidor");
+  }
+};
+export const verProfesionales = async (req, res) => {
+  try {
+    const usuarios = await Usuario.find().populate("rol");
+
+    const usuariosConRolProfesional = [];
+    usuarios.forEach((usuario) => {
+      if (usuario.rol && usuario.rol.length > 0) {
+        usuario.rol.forEach((rol) => {
+          if (rol.nombre === "profesional") {
+            usuariosConRolProfesional.push(usuario);
+          }
+        });
+      }
+    });
+
+    res.status(200).json(usuariosConRolProfesional);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json(" Error en el servidor ");
+  }
+};
