@@ -79,6 +79,10 @@ const usuarioSchema = new Schema(
                 type:Boolean,
                 default:false
             }
+        },
+        token_fbs:{
+            type:String,
+            default:null
         }
     },
     {

@@ -7,5 +7,4 @@ const router = Router();
 router.get("/verPqrsPendientes", verPqrsPendientes);
 router.post("/crearPqrs",verificarToken, verificarAprendiz ,crearPqrs)
 router.put("/responderPqrs/:id", responderPqrs)
-
 export default router;

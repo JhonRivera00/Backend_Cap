@@ -10,5 +10,4 @@ router.get("/solicitudes/:id", verSolicitudesProfesional);
 router.put("/solicitudesAceptar/:id", aceptarSolicitud);
 router.put("/solicitudesAplazar/:id", aplazarSolicitud);
 
-
 export default router;

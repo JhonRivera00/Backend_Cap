@@ -599,3 +599,5 @@ export const verProfesionales = async (req, res) => {
     return res.status(500).json(" Error en el servidor ");
   }
 };
+
+

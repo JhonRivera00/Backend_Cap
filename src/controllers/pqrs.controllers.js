@@ -1,5 +1,6 @@
 import Notificaciones from "../models/Notificaciones.js";
 import Pqrs from "../models/Pqrs.js";
+import Usuario from '../models/Usuario.js'
 
 // Esto es para el usuairo tipo aprendiz
 export const misPqrs = async(req, res)=>{
@@ -65,6 +66,8 @@ export const responderPqrs = async(req, res)=>{
             "estado.respondida": true,
         });
         const usuario = pqrsRes.id_usuario
+    const aprendiz_fbs = await Usuario.findById(usuario)
+
         const motivo = pqrsRes.tipo
        console.log(pqrsRes)
 
@@ -73,6 +76,15 @@ export const responderPqrs = async(req, res)=>{
         notificacionModel.contenido = respuesta;
         notificacionModel.motivo = motivo;
         notificacionModel.usuarioId = usuario;
+        const mensaje = {
+            token: aprendiz_fbs.token_fbs,
+            notification: {
+              title: "Nuevo mensaje",
+              body: contenido
+            }
+          }
+          const response = await admin.messaging().send(mensaje);
+          console.log("Mensaje enviado:", response);
         await notificacionModel.save();
         
         res.status(200).json("Pqrs respondida exitodamente");
