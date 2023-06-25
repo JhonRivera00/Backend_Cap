@@ -101,16 +101,18 @@ export const aceptarSolicitud = async (req, res) => {
     notificacionModel.usuarioId = usuario;
     notificacionModel.fechaAplazada = cadenaFecha;
     notificacionModel.profesionalId = usuarioProfesional
+    if(aprendiz_fbs.token_fbs){
 
-    const message = {
-      token: aprendiz_fbs.token_fbs,
-      notification: {
-        title: "Nuevo mensaje",
-        body: contenido
+      const message = {
+        token: aprendiz_fbs.token_fbs,
+        notification: {
+          title: "Nuevo mensaje",
+          body: contenido
+        }
       }
+      const response = await admin.messaging().send(message);
+      console.log("Mensaje enviado:", response); 
     }
-    const response = await admin.messaging().send(message);
-    console.log("Mensaje enviado:", response);
     await notificacionModel.save();
 
     const contenidoProfesional = `Tienes una una nueva cita para la fecha ${cadenaFecha}`;
@@ -120,15 +122,18 @@ export const aceptarSolicitud = async (req, res) => {
     notificacionProfesionalModel.contenido = contenidoProfesional;
     notificacionProfesionalModel.fechaAplazada = cadenaFecha;
     notificacionProfesionalModel.usuarioId = usuarioProfesional;
-    const mensaje = {
-      token: profesional_fbs.token_fbs,
-      notification: {
-        title: "Nuevo mensaje",
-        body: contenidoProfesional
+    if(profesional_fbs.token_fbs){
+
+      const mensaje = {
+        token: profesional_fbs.token_fbs,
+        notification: {
+          title: "Nuevo mensaje",
+          body: contenidoProfesional
+        }
       }
+      const respuesta = await admin.messaging().send(mensaje);
+      console.log("Mensaje enviado:", respuesta);
     }
-    const respuesta = await admin.messaging().send(mensaje);
-    console.log("Mensaje enviado:", respuesta);
     await notificacionProfesionalModel.save();
 
     res.status(200).json("Solicitud Aceptada");
@@ -176,16 +181,18 @@ export const aplazarSolicitud = async (req, res) => {
     notificacionModel.profesionalId = nuevoProfesional
     notificacionModel.motivo = motivo;
     await notificacionModel.save();
+if(aprendiz_fbs.token_fbs){
 
-    const message = {
-      token: aprendiz_fbs.token_fbs,
-      notification: {
-        title: "Nuevo mensaje",
-        body: contenido
-      }
+  const message = {
+    token: aprendiz_fbs.token_fbs,
+    notification: {
+      title: "Nuevo mensaje",
+      body: contenido
     }
-    const response = await admin.messaging().send(message);
-    console.log("Mensaje enviado:", response);
+  }
+  const response = await admin.messaging().send(message);
+  console.log("Mensaje enviado:", response);
+}
 
     const usuarioProfesional = solicitudAplazada.id_profesional;
     const contenidoProfesional = `Tienes una una nueva cita para el dia ${cadenaFecha}`;
@@ -196,15 +203,18 @@ export const aplazarSolicitud = async (req, res) => {
     notificacionProfesionalModel.usuarioId = usuarioProfesional
     notificacionProfesionalModel.fechaAplazada = cadenaFecha;
     notificacionProfesionalModel.aprendizId = usuario;
+    if(profesional_fbs.token_fbs){
+
     const mensaje = {
       token: profesional_fbs.token_fbs,
       notification: {
         title: "Nuevo mensaje",
-        body: conten
+        body: contenidoProfesional
       }
     }
     const respuesta = await admin.messaging().send(mensaje);
     console.log("Mensaje enviado:", respuesta);
+  }
     await notificacionProfesionalModel.save();
 
     res.status(200).json("Solicitud Aplazada");

@@ -76,18 +76,21 @@ export const responderPqrs = async(req, res)=>{
         notificacionModel.contenido = respuesta;
         notificacionModel.motivo = motivo;
         notificacionModel.usuarioId = usuario;
-        const mensaje = {
-            token: aprendiz_fbs.token_fbs,
-            notification: {
-              title: "Nuevo mensaje",
-              body: contenido
-            }
-          }
-          const response = await admin.messaging().send(mensaje);
-          console.log("Mensaje enviado:", response);
+
+        if(aprendiz_fbs.token_fbs){
+            const mensaje = {
+                token: aprendiz_fbs.token_fbs,
+                notification: {
+                  title: "Nuevo mensaje",
+                  body: respuesta
+                }
+              }
+              const response = await admin.messaging().send(mensaje);
+              console.log("Mensaje enviado:", response);
+        }
         await notificacionModel.save();
         
-        res.status(200).json("Pqrs respondida exitodamente");
+        res.status(200).json("Pqrs respondida exitosamente");
 
     } catch (error) {
         console.log(error);
