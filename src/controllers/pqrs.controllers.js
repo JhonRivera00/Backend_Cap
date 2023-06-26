@@ -1,7 +1,7 @@
 import Notificaciones from "../models/Notificaciones.js";
 import Pqrs from "../models/Pqrs.js";
 import Usuario from '../models/Usuario.js'
-
+import admin from 'firebase-admin';
 // Esto es para el usuairo tipo aprendiz
 export const misPqrs = async(req, res)=>{
     try {
@@ -81,7 +81,7 @@ export const responderPqrs = async(req, res)=>{
             const mensaje = {
                 token: aprendiz_fbs.token_fbs,
                 notification: {
-                  title: "Nuevo mensaje",
+                  title: "Han Respondido tu Pqrs",
                   body: respuesta
                 }
               }
